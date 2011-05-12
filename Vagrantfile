@@ -25,7 +25,7 @@ Vagrant::Config.run do |config|
   # computers to access the VM, whereas host only networking does not.
    config.vm.forward_port "web_front", 80, 8080
    config.vm.forward_port "zend_admin", 10081, 8081
-   config.vm.forward_port "mysql", 3306, 3309
+   config.vm.forward_port "mysql", 3306, 3306
    
   # Share an additional folder to the guest VM. The first argument is
   # an identifier, the second is the path on the guest to mount the
@@ -35,9 +35,9 @@ Vagrant::Config.run do |config|
 
   
   config.vm.provision :puppet do |puppet|
-    puppet.manifests_path = "puppetmanifests"
-    puppet.manifest_file = "init.pp"       
-    puppet.module_path = "my_modules"
+    puppet.manifests_path = "puppet/manifests"
+    puppet.manifest_file = "centos.pp"       
+    puppet.module_path = "puppet/modules"
    #puppet.options = "--verbose --debug"
   end  
       

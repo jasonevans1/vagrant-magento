@@ -1,0 +1,1 @@
+Provides a foundation for developing with Magento Commerce in a Vagrant box. The machine is based on CentOS 5.5. The manifest cent.pp has some variables that control the installation as shown below:
