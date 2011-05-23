@@ -1,8 +1,25 @@
 
 class zendserverce {
-    exec{set_selinux_permissive:
-        command => '/usr/sbin/setenforce permissive',        
-    }
+  exec{set_selinux_disabled:
+        command => '/usr/sbin/setenforce permissive',    
+        onlyif => '/usr/sbin/getenforce | grep Enforcing';               
+  }
+    
+  file { "/etc/selinux/config":
+      ensure  => present,
+      owner   => "root",
+      group   => "root",
+      mode    => "0644",
+      source  => "puppet:///modules/zendserverce/selinux",
+  }    
+  
+  file { "/etc/rc.local":
+      ensure  => present,
+      owner   => "root",
+      group   => "root",
+      mode    => "0777",
+      source  => "puppet:///modules/zendserverce/rc.local",
+  }    
     
     # 1.) Make sure Zend yum repos are installed 
 
@@ -33,7 +50,7 @@ class zendserverce {
         name => "zend-server-ce-php-5.3",
         ensure => installed,
         require => [ 
-			Exec["set_selinux_permissive"],
+			      Exec["set_selinux_disabled"],
             Yumrepo["Zend"], 
             Yumrepo["Zend_noarch"], 
             Package["httpd-devel"]
@@ -48,7 +65,7 @@ class zendserverce {
     }
     service { "httpd":
         ensure => running,
-	    subscribe => File["/etc/httpd/conf/httpd.conf"],        
+	      subscribe => File["/etc/httpd/conf/httpd.conf"],        
         require => Package["zendserverce"]
     }
     
@@ -57,13 +74,13 @@ class zendserverce {
         owner   => "root",
         group   => "root",
         mode    => "0644",
-        source  => "puppet:///modules/magento/httpd.conf",
+        source  => "puppet:///modules/zendserverce/httpd.conf",
         require => Package["zendserverce"];
     }
     
     exec { "start-zendserverce":
       command => "/usr/local/zend/bin/zendctl.sh restart",
-      require => Package["zendserverce"]
+      require => [Package["zendserverce"],Exec["set_selinux_disabled"]];
     }
     
 }

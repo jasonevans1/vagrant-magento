@@ -7,7 +7,7 @@ Vagrant::Config.run do |config|
   config.vm.box = "centos55"
 
   config.vm.customize do |vm|
-    vm.memory_size = 1024
+    vm.memory_size = 512
   end
   
   # The url from where the 'config.vm.box' box will be fetched if it
@@ -25,7 +25,7 @@ Vagrant::Config.run do |config|
   # computers to access the VM, whereas host only networking does not.
    config.vm.forward_port "web_front", 80, 8080
    config.vm.forward_port "zend_admin", 10081, 8081
-   config.vm.forward_port "mysql", 3306, 3306
+   config.vm.forward_port "mysql", 3306, 3309
    
   # Share an additional folder to the guest VM. The first argument is
   # an identifier, the second is the path on the guest to mount the
