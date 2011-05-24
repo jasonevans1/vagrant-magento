@@ -13,5 +13,8 @@ List of installed software.
 * xdebug
 * phpunit
 
+The settings used to install Magento are in the file:  puppet/modules/magento/manifests/init.php.
+* Magento admin user: admin
+* Magento admin password: secret123
 
-[Ruby](http://ruby-lang.org) and [Vagrant](http://vagrantup.com) and VirtualBox are prerequisites.
+[Ruby](http://ruby-lang.org) and [Vagrant](http://vagrantup.com) and VirtualBox are prerequisites. 
