@@ -20,16 +20,16 @@ class magento {
 
   exec { "download-magento":
     cwd => "/tmp",
-    command => "/usr/bin/wget http://www.magentocommerce.com/downloads/assets/1.5.1.0/magento-1.5.1.0.tar.gz",
-    creates => "/tmp/magento-1.5.1.0.tar.gz"
+    command => "/usr/bin/wget http://www.magentocommerce.com/downloads/assets/1.6.0.0/magento-1.6.0.0.tar.gz",
+    creates => "/tmp/magento-1.6.0.0.tar.gz"
   }
   
   exec { "untar-magento":
     cwd => $document_root,
-    command => "/bin/tar xvzf /tmp/magento-1.5.1.0.tar.gz",
+    command => "/bin/tar xvzf /tmp/magento-1.6.0.0.tar.gz",
     require => [Exec["download-magento"],  Class["zendserverce"]]
   }
-  						
+
   exec { "setting-permissions":
     cwd => "$document_root/magento",
     command => "/bin/chmod 550 mage; /bin/chmod o+w var var/.htaccess app/etc; /bin/chmod -R o+w media",
