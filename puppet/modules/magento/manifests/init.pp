@@ -1,48 +1,64 @@
 class magento {
   
   exec { "create-magentodb-db":
-        unless => "/usr/bin/mysql -uroot -p${db_root_password} magentodb",
-        command => "/usr/bin/mysql -uroot -p${db_root_password} -e \"create database magentodb;\"",
-        require => [Service["mysqld"], Exec["set-mysql-password"]]
-  }
+        unless => "/usr/bin/mysql -uroot -pmagento magentodb",
+        command => "/usr/bin/mysql -uroot -pmagento -e \"create database magentodb;\"",
+        require => [Service["mysql"], Exec["set-mysql-password"]]
+  }      
 
   exec { "grant-magentodb-db-all":
-        unless => "/usr/bin/mysql -umagento -p${db_magento_password} magentodb",
-        command => "/usr/bin/mysql -uroot -p${db_root_password} -e \"grant all on *.* to magento@'%' identified by '${db_magento_password}' WITH GRANT OPTION;\"",
-        require => [Service["mysqld"], Exec["create-magentodb-db"]]
+        unless => "/usr/bin/mysql -umagento -psecret magentodb",
+        command => "/usr/bin/mysql -uroot -pmagento -e \"grant all on *.* to magento@'%' identified by 'secret' WITH GRANT OPTION;\"",
+        require => [Service["mysql"], Exec["create-magentodb-db"]]
   }      
       
   exec { "grant-magentodb-db-localhost":
-        unless => "/usr/bin/mysql -umagento -p${db_magento_password} magentodb",
-        command => "/usr/bin/mysql -uroot -p${db_root_password} -e \"grant all on *.* to magento@'localhost' identified by '${db_magento_password}' WITH GRANT OPTION;\"",
+        unless => "/usr/bin/mysql -umagento -psecret magentodb",
+        command => "/usr/bin/mysql -uroot -pmagento -e \"grant all on *.* to magento@'localhost' identified by 'secret' WITH GRANT OPTION;\"",
         require => Exec["grant-magentodb-db-all"]
   }      
 
   exec { "download-magento":
     cwd => "/tmp",
-    command => "/usr/bin/wget http://www.magentocommerce.com/downloads/assets/1.6.0.0/magento-1.6.0.0.tar.gz",
-    creates => "/tmp/magento-1.6.0.0.tar.gz"
+    command => "/usr/bin/wget http://www.magentocommerce.com/downloads/assets/1.7.0.2/magento-1.7.0.2.tar.gz",
+    creates => "/tmp/magento-1.7.0.2.tar.gz"
   }
   
   exec { "untar-magento":
-    cwd => $document_root,
-    command => "/bin/tar xvzf /tmp/magento-1.6.0.0.tar.gz",
+    cwd => "/tmp",
+    command => "/bin/tar xvzf /tmp/magento-1.7.0.2.tar.gz",
+    creates => "/tmp/magento/app/etc/local.xml",
     require => [Exec["download-magento"],  Class["zendserverce"]]
   }
 
   exec { "setting-permissions":
-    cwd => "$document_root/magento",
-    command => "/bin/chmod 550 mage; /bin/chmod o+w var var/.htaccess app/etc; /bin/chmod -R o+w media",
+    cwd => "/tmp/magento",
+    command => "/bin/chown -R vagrant /tmp/magento;/bin/chgrp -R vagrant /tmp/magento;/bin/chmod -R 777 /tmp/magento",
     require => Exec["untar-magento"],
   }
+
+  exec { "copy-magento-to-data-folder":
+    cwd => "/tmp",
+    command => "/bin/cp -r /tmp/magento /vagrant_data/",
+    creates => "/vagrant_data/magento/app/etc/local.xml",    
+    require => [Exec["setting-permissions"]]
+  }
+
+  exec { "copy-hidden-files-magento-to-data-folder":
+    cwd => "/tmp",
+    command => "/bin/cp -r /tmp/magento/.[a-zA-Z0-9]* /vagrant_data",
+    creates => "/vagrant_data/magento/.htaccess",    
+    require => [Exec["copy-magento-to-data-folder"]]
+  }
+
   				
    host { 'magento.localhost':
            ip => '127.0.0.1',
    }
 
   exec { "install-magento":
-    cwd => "$document_root/magento",
-    creates => "$document_root/magento/app/etc/local.xml",
+    cwd => "/vagrant_data/magento",
+    creates => "/vagrant_data/magento/app/etc/local.xml",
     command => '/usr/local/zend/bin/php-cli -f install.php -- \
     --license_agreement_accepted "yes" \
     --locale "en_US" \
@@ -63,7 +79,7 @@ class magento {
     --admin_email "email@address.com" \
     --admin_username "admin" \
     --admin_password "secret123"',
-    require => [Exec["setting-permissions"],Exec["create-magentodb-db"]],
+    require => [Exec["copy-hidden-files-magento-to-data-folder"],Exec["create-magentodb-db"],Exec["grant-magentodb-db-localhost"]],
   }
   	
 }

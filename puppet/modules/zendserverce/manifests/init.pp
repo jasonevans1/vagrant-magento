@@ -25,14 +25,14 @@ class zendserverce {
 
     yumrepo { "Zend":
         descr => "Zend Server",
-        baseurl => "http://repos.zend.com/zend-server/rpm/\$basearch",
+        baseurl => "http://repos-source.zend.com/zend-server/6.0.1/rpm/\$basearch",
         enabled => 1,
         gpgcheck => 0,
         gpgkey => "http://repos.zend.com/zend.key"
     }
     yumrepo { "Zend_noarch":
         descr => "Zend Server - noarch",
-        baseurl => "http://repos.zend.com/zend-server/rpm/noarch",
+        baseurl => "http://repos-source.zend.com/zend-server/6.0.1/rpm/noarch/",
         enabled => 1,
         gpgcheck => 0,
         gpgkey => "http://repos.zend.com/zend.key"
@@ -47,7 +47,7 @@ class zendserverce {
     # 3.) Install Zend Server CE
 
     package { "zendserverce":
-        name => "zend-server-ce-php-5.3",
+        name => "zend-server-php-5.4",
         ensure => installed,
         require => [ 
 			      Exec["set_selinux_disabled"],
