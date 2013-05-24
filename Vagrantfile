@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-    config.vm.synced_folder "../../workspace", "/vagrant_data", :nfs => true
+  #  config.vm.synced_folder "../../workspace", "/vagrant_data", :nfs => true
   #  config.vm.share_folder "document-root", "/vagrant_data/magento", "../magento", :owner => "vagrant", :group => "vagrant"
 
   # Provider-specific configuration so you can fine-tune various
@@ -118,5 +118,17 @@ Vagrant.configure("2") do |config|
   # chef-validator, unless you changed the configuration.
   #
   #   chef.validation_client_name = "ORGNAME-validator"
+  
+ config.vm.provider :aws do |aws, override|
+    aws.access_key_id = "YOUR KEY"
+    aws.secret_access_key = "YOUR SECRET KEY"
+    aws.keypair_name = "KEYPAIR NAME"
+
+    aws.ami = "CENTOS 6.4 AMI"
+
+    override.ssh.username = "root"
+    override.ssh.private_key_path = "PATH TO YOUR PRIVATE KEY" 
+  end
+
 end
 
