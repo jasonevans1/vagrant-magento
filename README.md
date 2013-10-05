@@ -1,9 +1,9 @@
 Provides a foundation for developing with Magento Commerce in a Vagrant box. The machine is based on CentOS 6.4. 
 
 ==== List of installed software.
-* Magento Community Edition - 1.7.0.2
+* Magento Community Edition - 1.8.0.0
 * MariaDB 5.5
-* Zend Server 6.0.1 - PHP 5.4
+* Zend Server 6.1 - PHP 5.4
 * phpunit
 
 ==== The settings used to install Magento are in the file:  puppet/modules/magento/manifests/init.php.

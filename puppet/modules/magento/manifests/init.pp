@@ -20,13 +20,13 @@ class magento {
 
   exec { "download-magento":
     cwd => "/tmp",
-    command => "/usr/bin/wget http://www.magentocommerce.com/downloads/assets/1.7.0.2/magento-1.7.0.2.tar.gz",
-    creates => "/tmp/magento-1.7.0.2.tar.gz"
+    command => "/usr/bin/wget http://www.magentocommerce.com/downloads/assets/1.8.0.0/magento-1.8.0.0.tar.gz",
+    creates => "/tmp/magento-1.8.0.0.tar.gz"
   }
   
   exec { "untar-magento":
     cwd => "/tmp",
-    command => "/bin/tar xvzf /tmp/magento-1.7.0.2.tar.gz",
+    command => "/bin/tar xvzf /tmp/magento-1.8.0.0.tar.gz",
     creates => "/tmp/magento/app/etc/local.xml",
     require => [Exec["download-magento"],  Class["zendserverce"]]
   }
