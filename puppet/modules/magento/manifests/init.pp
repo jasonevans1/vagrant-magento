@@ -37,11 +37,18 @@ class magento {
     require => Exec["untar-magento"],
   }
 
+  file { "/vagrant_data":
+    ensure => directory,
+    owner  => "vagrant",
+    group  => "vagrant",
+    mode   => 775,
+  }
+
   exec { "copy-magento-to-data-folder":
     cwd => "/tmp",
     command => "/bin/cp -r /tmp/magento /vagrant_data/",
     creates => "/vagrant_data/magento/app/etc/local.xml",    
-    require => [Exec["setting-permissions"]]
+    require => [Exec["setting-permissions"], File["/vagrant_data"]]
   }
 
   exec { "copy-hidden-files-magento-to-data-folder":
